@@ -13,6 +13,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -39,11 +41,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, DaoAuthenticationProvider authenticationProvider) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable) //ToDo: da non disabilatare, va gestito dal form e passato al be
+                .csrf(csrf -> csrf
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
+                )
                 .authenticationProvider(authenticationProvider)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/login", "/register").permitAll() // Permetti l'accesso a /login, /register e altre risorse
-//                        .requestMatchers(HttpMethod.POST, "/user/insert").permitAll()
                         .requestMatchers("/dashboard/**").hasAnyRole("USER", "ADMIN")  // Proteggi la dashboard per utenti con ruoli USER o ADMIN
                         .anyRequest().authenticated()  // Tutte le altre richieste richiedono autenticazione
                 )

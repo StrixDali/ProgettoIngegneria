@@ -12,6 +12,7 @@
     <div class="row">
         <div class="col-12">
             <form method="post" action="/user/insert" th:object="${user}">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                 <div class="mb-3">
                     <label  class="form-label">Nome</label>
                     <input type="text" name="name" placeholder="Pipp">
@@ -21,7 +22,7 @@
                     <input type="text" name="cognome" placeholder="Paolo">
                 </div>
 
-                <input type="submit">Invia</input>
+                <button type="submit" class="btn btn-primary">Invia</button>
             </form>
         </div>
     </div>
